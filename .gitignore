@@ -42,3 +42,15 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# AntiGravity IDE & Gemini CLI
+.antigravity/
+.gemini/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# MCP & AI Tooling
+.mcp/
