@@ -44,7 +44,7 @@ describe('ApiService', () => {
     // 3. Assert Backend Call: Checamos se ocorreu um (e somente um) GET neste endpoint
     // NOTA: Ajustaremos a URL exata quando você fornecer a URL da API da prova técnica
     const req = httpMock.expectOne({ method: 'GET', url: 'https://api.copadomundo.com/teams' });
-    
+
     // VALIDAMOS ESTANDO COMPLETAMENTE DE ACORDO: Tem que enviar a sua string de usuário no Git
     expect(req.request.headers.has('git-user')).toBeTruthy();
     // Exemplo: expect(req.request.headers.get('git-user')).toBe('vitor');

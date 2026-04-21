@@ -10,7 +10,7 @@ Ao final, envia os resultados do campeão de volta para a infraestrutura da empr
 
 ## 2. Stack Tecnológica e Arquitetura
 
-- **Core:** Angular (Standalone Components), TypeScript, HTML5, SCSS
+- **Core:** Angular (Standalone Components), TypeScript, HTML5, CSS Tailwind.
 - **Qualidade e Testes:** Jest. O foco absoluto de cobertura de testes será na lógica de negócio e serviços.
 - **Arquitetura:** Padrão Angular (Core/Shared/Features)
   - `app/core`: Centraliza serviços singleton, modelos de dados globais e a configuração da API. É o "cérebro" da aplicação.
