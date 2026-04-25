@@ -6,7 +6,7 @@ import { Team } from '../models/team.model';
   providedIn: 'root'
 })
 export class TournamentStateService {
-  private readonly STORAGE_KEY = 'wc-simulator:state';
+  private readonly STORAGE_KEY = 'wc-simulator:state:v2';
 
   private readonly _state = signal<TournamentState>(this.loadInitialState());
 
@@ -31,7 +31,8 @@ export class TournamentStateService {
       teams: [],
       groups: [],
       knockoutRoot: null,
-      champion: null
+      champion: null,
+      currentStep: 0
     };
 
     try {
@@ -46,6 +47,11 @@ export class TournamentStateService {
                       
       if (!isValid) {
         return defaultState;
+      }
+
+      // Garantir que currentStep existe para evitar resets em F5
+      if (typeof parsed.currentStep !== 'number') {
+        parsed.currentStep = 0;
       }
 
       return parsed;
@@ -72,6 +78,36 @@ export class TournamentStateService {
   }
 
   /**
+   * Registra os grupos sorteados e persiste o estado.
+   */
+  setGroups(groups: any[]): void {
+    this.updateState({ 
+      ...this._state(), 
+      groups: [...groups] 
+    });
+  }
+
+  /**
+   * Atualiza o progresso da simulação.
+   */
+  setStep(step: number): void {
+    this.updateState({
+      ...this._state(),
+      currentStep: step
+    });
+  }
+
+  /**
+   * Atualiza a árvore do mata-mata.
+   */
+  setKnockout(root: any): void {
+    this.updateState({ 
+      ...this._state(), 
+      knockoutRoot: root 
+    });
+  }
+
+  /**
    * Remove todo o progresso da simulação e limpa o LocalStorage.
    */
   resetState(): void {
@@ -79,7 +115,8 @@ export class TournamentStateService {
       teams: [],
       groups: [],
       knockoutRoot: null,
-      champion: null
+      champion: null,
+      currentStep: 0
     });
     localStorage.removeItem(this.STORAGE_KEY);
   }

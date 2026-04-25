@@ -3,6 +3,7 @@ import { Team } from '../models/team.model';
 import { Match } from '../models/match.model';
 import { Standing } from '../models/standing.model';
 import { KnockoutMatch } from '../models/knockout-match.model';
+import { Group } from '../models/group.model';
 
 @Injectable({
   providedIn: 'root'
@@ -45,8 +46,9 @@ export class SimulationService {
    * Simula placar de uma partida da fase de grupos
    */
   simulateGroupMatch(match: Match): Match {
-    match.goalsA = this.simulateGoals();
-    match.goalsB = this.simulateGoals();
+    match.golsEquipeA = this.simulateGoals();
+    match.golsEquipeB = this.simulateGoals();
+    match.played = true;
     return match;
   }
 
@@ -71,22 +73,25 @@ export class SimulationService {
     });
 
     matches.forEach(m => {
-      const sA = standingsMap.get(m.teamA.id)!;
-      const sB = standingsMap.get(m.teamB.id)!;
+      if (!m.played) return;
 
-      sA.goalsFor += m.goalsA;
-      sA.goalsAgainst += m.goalsB;
+      // Encontrar os times no standingsMap baseando-se nos IDs de equipeA e equipeB
+      const sA = standingsMap.get(m.equipeA)!;
+      const sB = standingsMap.get(m.equipeB)!;
+
+      sA.goalsFor += m.golsEquipeA;
+      sA.goalsAgainst += m.golsEquipeB;
       sA.goalDifference = sA.goalsFor - sA.goalsAgainst;
 
-      sB.goalsFor += m.goalsB;
-      sB.goalsAgainst += m.goalsA;
+      sB.goalsFor += m.golsEquipeB;
+      sB.goalsAgainst += m.golsEquipeA;
       sB.goalDifference = sB.goalsFor - sB.goalsAgainst;
 
-      if (m.goalsA > m.goalsB) {
+      if (m.golsEquipeA > m.golsEquipeB) {
         sA.points += 3;
         sA.wins++;
         sB.losses++;
-      } else if (m.goalsA < m.goalsB) {
+      } else if (m.golsEquipeA < m.golsEquipeB) {
         sB.points += 3;
         sB.wins++;
         sA.losses++;
@@ -145,6 +150,27 @@ export class SimulationService {
   }
 
   /**
+   * Resolve uma rodada específica do mata-mata, propagando vencedores
+   */
+  simulateKnockoutRound(node: KnockoutMatch | undefined | null, targetRound: 'R16' | 'QF' | 'SF' | 'F'): void {
+    if (!node) return;
+
+    // Resolve recursivamente para garantir que os filhos (fases anteriores)
+    // propaguem seus vencedores antes da fase atual ser simulada
+    if (node.childA) this.simulateKnockoutRound(node.childA, targetRound);
+    if (node.childB) this.simulateKnockoutRound(node.childB, targetRound);
+
+    // Propaga os vencedores dos filhos se existirem (para nós pai)
+    if (node.childA?.winner && !node.teamA) node.teamA = node.childA.winner;
+    if (node.childB?.winner && !node.teamB) node.teamB = node.childB.winner;
+
+    // Se este nó for da rodada alvo e tiver os times prontos, mas não simulado ainda
+    if (node.round === targetRound && node.teamA && node.teamB && !node.result) {
+      this.resolveMatch(node);
+    }
+  }
+
+  /**
    * Travessia em pós-ordem para resolver a árvore do mata-mata
    */
   simulateKnockoutMatch(node: KnockoutMatch): Team {
@@ -173,17 +199,22 @@ export class SimulationService {
     const goalsB = this.simulateGoals();
 
     if (goalsA !== goalsB) {
-      node.result = { teamA: node.teamA, teamB: node.teamB, goalsA, goalsB };
+      node.result = { 
+        equipeA: node.teamA.id, 
+        equipeB: node.teamB.id, 
+        golsEquipeA: goalsA, 
+        golsEquipeB: goalsB 
+      };
       node.winner = goalsA > goalsB ? node.teamA : node.teamB;
     } else {
       const { penaltyA, penaltyB } = this.simulatePenalties();
       node.result = { 
-        teamA: node.teamA, 
-        teamB: node.teamB, 
-        goalsA, 
-        goalsB, 
-        penaltyA, 
-        penaltyB 
+        equipeA: node.teamA.id, 
+        equipeB: node.teamB.id, 
+        golsEquipeA: goalsA, 
+        golsEquipeB: goalsB, 
+        golsPenaltyTimeA: penaltyA, 
+        golsPenaltyTimeB: penaltyB 
       };
       node.winner = penaltyA > penaltyB ? node.teamA : node.teamB;
     }

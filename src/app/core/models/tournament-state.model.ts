@@ -7,4 +7,5 @@ export interface TournamentState {
   groups: Group[];
   knockoutRoot: KnockoutMatch | null;  // raiz da árvore binária do mata-mata
   champion: Team | null;
+  currentStep: number;
 }

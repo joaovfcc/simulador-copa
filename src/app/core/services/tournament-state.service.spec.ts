@@ -5,7 +5,7 @@ import { Team } from '../models/team.model';
 
 describe('TournamentStateService', () => {
   let service: TournamentStateService;
-  const STORAGE_KEY = 'wc-simulator:state';
+  const STORAGE_KEY = 'wc-simulator:state:v2';
 
   const mockTeams: Team[] = Array.from({ length: 32 }, (_, i) => ({
     id: `uuid-${i}`,
@@ -39,7 +39,8 @@ describe('TournamentStateService', () => {
       teams: mockTeams.slice(0, 2),
       groups: [],
       knockoutRoot: null,
-      champion: null
+      champion: null,
+      currentStep: 0
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(mockState));
     
