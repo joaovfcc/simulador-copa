@@ -1,6 +1,6 @@
-# World Cup Simulator 2022
+# World Cup Simulator 2026
 
-Um simulador completo da Copa do Mundo 2022, desenvolvido com **Angular 19** e focado em fidelidade visual (Mockup Canvas) e integridade de lógica de negócio (TDD).
+Um simulador completo da Copa do Mundo 2026, desenvolvido com **Angular 19** e focado em fidelidade visual (Mockup Canvas) e integridade de lógica de negócio (TDD).
 
 ## 🚀 Funcionalidades
 
@@ -45,12 +45,12 @@ npm test
 
 ## 🏗️ Arquitetura
 
-O projeto segue os princípios de **Clean Architecture** aplicada ao Angular:
+O projeto adota o padrão de organização **Core / Shared / Features**, uma das convenções mais robustas recomendadas pela comunidade Angular para escalabilidade e separação de responsabilidades:
 
-- **Core:** Centraliza serviços singleton (`ApiService`, `SimulationService`, `TournamentStateService`) e modelos de dados.
-- **Features:** Encapsula o `DashboardComponent` e seus sub-componentes específicos (`GroupTable`, `MatchCard`).
-- **Shared:** Componentes de UI genéricos e utilitários reutilizáveis.
-- **Spec-Driven:** O motor lógico foi construído com base nas especificações do PRD, garantindo que os UUIDs das seleções sejam preservados do início ao fim para a submissão final.
+- **Core:** Centraliza o "coração" da aplicação, incluindo serviços singleton globais (`ApiService`, `SimulationService`, `TournamentStateService`), interceptores HTTP e modelos de dados compartilhados.
+- **Features:** Contém os componentes de página e módulos de funcionalidade específica. A lógica de orquestração do torneio reside no `DashboardComponent`.
+- **Shared:** Focado em reutilização, hospeda componentes de UI puramente visuais (`Button`, `GroupTable`, `MatchCard`) e utilitários que podem ser usados em qualquer lugar da aplicação.
+- **Spec-Driven:** A lógica de negócio foi validada via **TDD (Test-Driven Development)**, garantindo que os UUIDs das seleções sejam preservados e que os critérios de desempate sigam rigorosamente as regras do PDF de instruções.
 
 ---
 Desenvolvido como parte do Processo Seletivo Katalyst 2026.
