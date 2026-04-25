@@ -14,4 +14,8 @@ export class ApiService {
   getTeams(): Observable<Team[]> {
     return this.http.get<Team[]>(`${this.BASE_URL}/GetAllTeams`);
   }
+
+  submitFinalResult(payload: any): Observable<string> {
+    return this.http.post(`${this.BASE_URL}/FinalResult`, payload, { responseType: 'text' });
+  }
 }

@@ -51,7 +51,7 @@ export class GroupDrawService {
   // ─── Helpers privados ─────────────────────────────────────────────────────
 
   private makeMatch(teamA: Team, teamB: Team): Match {
-    return { teamA, teamB, goalsA: 0, goalsB: 0 };
+    return { equipeA: teamA.id, equipeB: teamB.id, golsEquipeA: 0, golsEquipeB: 0, played: false };
   }
 
   private shuffle<T>(arr: T[]): T[] {

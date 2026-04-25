@@ -83,7 +83,7 @@ describe('GroupDrawService', () => {
     const rounds = service.generateRounds(teams);
     const matchups = rounds
       .flatMap(r => r.matches)
-      .map(m => [m.teamA.id, m.teamB.id].sort().join('vs'));
+      .map(m => [m.equipeA, m.equipeB].sort().join('vs'));
 
     // 4 times = 6 confrontos únicos possíveis (C(4,2))
     const unique = new Set(matchups);
@@ -95,7 +95,7 @@ describe('GroupDrawService', () => {
     const rounds = service.generateRounds(teams);
     const matchups = rounds
       .flatMap(r => r.matches)
-      .map(m => [m.teamA.id, m.teamB.id].sort().join('vs'));
+      .map(m => [m.equipeA, m.equipeB].sort().join('vs'));
 
     const unique = new Set(matchups);
     expect(unique.size).toBe(matchups.length);
@@ -105,7 +105,7 @@ describe('GroupDrawService', () => {
     const teams = make32Teams().slice(0, 4);
     const rounds = service.generateRounds(teams);
     rounds.forEach(r => {
-      const idsInRound = r.matches.flatMap(m => [m.teamA.id, m.teamB.id]);
+      const idsInRound = r.matches.flatMap(m => [m.equipeA, m.equipeB]);
       const unique = new Set(idsInRound);
       expect(unique.size).toBe(idsInRound.length);
     });

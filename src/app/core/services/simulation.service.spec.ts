@@ -28,7 +28,7 @@ describe('SimulationService', () => {
 
   // Desempate e Pontuação
   it('deve atribuir 3 pontos ao vencedor e 0 ao perdedor', () => {
-    const match: Match = { teamA, teamB, goalsA: 2, goalsB: 1 };
+    const match: Match = { equipeA: teamA.id, equipeB: teamB.id, golsEquipeA: 2, golsEquipeB: 1, played: true };
     const standings = service.calculateStandings([teamA, teamB], [match]);
     
     const sA = standings.find(s => s.team.id === 'A')!;
@@ -41,7 +41,7 @@ describe('SimulationService', () => {
   });
 
   it('deve atribuir 1 ponto a cada equipe em caso de empate na fase de grupos', () => {
-    const match: Match = { teamA, teamB, goalsA: 1, goalsB: 1 };
+    const match: Match = { equipeA: teamA.id, equipeB: teamB.id, golsEquipeA: 1, golsEquipeB: 1, played: true };
     const standings = service.calculateStandings([teamA, teamB], [match]);
     
     const sA = standings.find(s => s.team.id === 'A')!;
@@ -54,8 +54,8 @@ describe('SimulationService', () => {
   });
 
   it('deve desempatar por pontos como primeiro critério', () => {
-    const match1: Match = { teamA, teamB, goalsA: 2, goalsB: 0 }; // A: 3 pts, B: 0 pts
-    const match2: Match = { teamA: teamC, teamB: teamA, goalsA: 0, goalsB: 1 }; // C: 0 pts, A: 6 pts
+    const match1: Match = { equipeA: teamA.id, equipeB: teamB.id, golsEquipeA: 2, golsEquipeB: 0, played: true }; // A: 3 pts, B: 0 pts
+    const match2: Match = { equipeA: teamC.id, equipeB: teamA.id, golsEquipeA: 0, golsEquipeB: 1, played: true }; // C: 0 pts, A: 6 pts
     const standings = service.calculateStandings([teamA, teamB, teamC], [match1, match2]);
     
     expect(standings[0].team.id).toBe('A');
@@ -63,8 +63,8 @@ describe('SimulationService', () => {
 
   it('deve desempatar por saldo de gols como segundo critério', () => {
     // A e B com 3 pts
-    const match1: Match = { teamA, teamB: teamC, goalsA: 3, goalsB: 0 }; // A: 3 pts, saldo 3
-    const match2: Match = { teamA: teamB, teamB: teamC, goalsA: 1, goalsB: 0 }; // B: 3 pts, saldo 1
+    const match1: Match = { equipeA: teamA.id, equipeB: teamC.id, golsEquipeA: 3, golsEquipeB: 0, played: true }; // A: 3 pts, saldo 3
+    const match2: Match = { equipeA: teamB.id, equipeB: teamC.id, golsEquipeA: 1, golsEquipeB: 0, played: true }; // B: 3 pts, saldo 1
     const standings = service.calculateStandings([teamA, teamB, teamC], [match1, match2]);
     
     expect(standings[0].team.id).toBe('A');
@@ -72,9 +72,9 @@ describe('SimulationService', () => {
   });
 
   it('deve usar sorteio aleatório como critério final de desempate', () => {
-    const match1: Match = { teamA, teamB, goalsA: 0, goalsB: 0 }; 
-    const match2: Match = { teamA: teamB, teamB: teamC, goalsA: 0, goalsB: 0 }; 
-    const match3: Match = { teamA, teamB: teamC, goalsA: 0, goalsB: 0 }; 
+    const match1: Match = { equipeA: teamA.id, equipeB: teamB.id, golsEquipeA: 0, golsEquipeB: 0, played: true }; 
+    const match2: Match = { equipeA: teamB.id, equipeB: teamC.id, golsEquipeA: 0, golsEquipeB: 0, played: true }; 
+    const match3: Match = { equipeA: teamA.id, equipeB: teamC.id, golsEquipeA: 0, golsEquipeB: 0, played: true }; 
     
     const standings = service.calculateStandings([teamA, teamB, teamC], [match1, match2, match3]);
     
@@ -99,12 +99,12 @@ describe('SimulationService', () => {
     expect(winner).toBeDefined();
     expect([teamA.id, teamB.id]).toContain(winner.id);
     
-    if (node.result!.goalsA === node.result!.goalsB) {
-      expect(node.result!.penaltyA).toBeDefined();
-      expect(node.result!.penaltyB).toBeDefined();
-      expect(node.result!.penaltyA).not.toBe(node.result!.penaltyB);
+    if (node.result!.golsEquipeA === node.result!.golsEquipeB) {
+      expect(node.result!.golsPenaltyTimeA).toBeDefined();
+      expect(node.result!.golsPenaltyTimeB).toBeDefined();
+      expect(node.result!.golsPenaltyTimeA).not.toBe(node.result!.golsPenaltyTimeB);
     } else {
-      expect(node.result!.goalsA).not.toBe(node.result!.goalsB);
+      expect(node.result!.golsEquipeA).not.toBe(node.result!.golsEquipeB);
     }
   });
 
@@ -162,12 +162,12 @@ describe('SimulationService', () => {
         { id: `${label}4`, name: `Team ${label}4` }
       ],
       matches: [
-        { teamA: { id: `${label}1` }, teamB: { id: `${label}2` }, goalsA: 2, goalsB: 0 },
-        { teamA: { id: `${label}1` }, teamB: { id: `${label}3` }, goalsA: 2, goalsB: 0 },
-        { teamA: { id: `${label}1` }, teamB: { id: `${label}4` }, goalsA: 2, goalsB: 0 },
-        { teamA: { id: `${label}2` }, teamB: { id: `${label}3` }, goalsA: 1, goalsB: 0 },
-        { teamA: { id: `${label}2` }, teamB: { id: `${label}4` }, goalsA: 1, goalsB: 0 },
-        { teamA: { id: `${label}3` }, teamB: { id: `${label}4` }, goalsA: 1, goalsB: 0 }
+        { equipeA: `${label}1`, equipeB: `${label}2`, golsEquipeA: 2, golsEquipeB: 0, played: true },
+        { equipeA: `${label}1`, equipeB: `${label}3`, golsEquipeA: 2, golsEquipeB: 0, played: true },
+        { equipeA: `${label}1`, equipeB: `${label}4`, golsEquipeA: 2, golsEquipeB: 0, played: true },
+        { equipeA: `${label}2`, equipeB: `${label}3`, golsEquipeA: 1, golsEquipeB: 0, played: true },
+        { equipeA: `${label}2`, equipeB: `${label}4`, golsEquipeA: 1, golsEquipeB: 0, played: true },
+        { equipeA: `${label}3`, equipeB: `${label}4`, golsEquipeA: 1, golsEquipeB: 0, played: true }
       ] as Match[]
     }));
 
@@ -180,9 +180,6 @@ describe('SimulationService', () => {
     expect(root.childB?.round).toBe('SF');
 
     // Verificação de um cruzamento específico (1º A vs 2º B)
-    // Precisamos navegar até o bisneto que representa a partida R16-1
-    // Seguindo a lógica do PRD:
-    // Final <- SF-1 <- QF-1 <- R16-1 (1A vs 2B)
     const sf1 = root.childA!;
     const qf1 = sf1.childA!;
     const r16_1 = qf1.childA!;

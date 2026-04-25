@@ -1,5 +1,18 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --bg-dark: #181818;
+  --bg-card: #2d2d30;
+  --border-color: #3c4043;
+  --text-primary: #ffffff;
+  --text-muted: #aaaaaa;
+  --primary: #f4b400;
+  --accent-blue: #4285f4;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+}

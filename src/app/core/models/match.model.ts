@@ -5,4 +5,5 @@ export interface Match {
   golsEquipeB: number;
   golsPenaltyTimeA?: number;
   golsPenaltyTimeB?: number;
+  played?: boolean;
 }
